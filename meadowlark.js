@@ -1,5 +1,7 @@
 const express = require('express');
 const expressHandlebars = require('express-handlebars');
+const fortuneCookie = require('./lib/fortune');
+
 const { engine } = expressHandlebars;
 
 const app = express();
@@ -10,14 +12,6 @@ app.set('view engine', 'handlebars');
 
 const port = process.env.port || 3000;
 
-const fortuneCookies = [
-    'Победи свои страхи, или они победят тебя.',
-    'Рекам нужны истоки.',
-    'Не бойся неведомого.',
-    'Тебя ждет приятный сюрприз.',
-    'Будь проще везде, где только можно.',
-];
-
 app.use(express.static(__dirname + '/public'));
 
 app.get('/', (req, res) => {
@@ -25,8 +19,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/about', (req, res) => {
-    const randomFortune = fortuneCookies[Math.floor(Math.random() * fortuneCookies.length)];
-    res.render('about', { fortune: randomFortune });
+    res.render('about', { fortune: fortuneCookie.getFortune() });
 });
 
 app.use((req, res) => {
