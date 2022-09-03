@@ -17,9 +17,17 @@ app.use(express.static(__dirname + '/public'));
 app.get('/', handlers.home);
 app.get('/about', handlers.about);
 
+/* eslint-disable no-unused-vars */
 app.use((req, res) => handlers.notFound);
 app.use((err, req, res, next) => handlers.serverError);
+/* eslint-enable no-unused-vars */
 
-app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`);
-});
+if (require.main === module) {
+    app.listen(port, () => {
+        console.log(
+            `Example app listening on port ${port}; Press Ctrl + C for exit.`,
+        );
+    });
+} else {
+    module.exports = app;
+}
