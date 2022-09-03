@@ -1,6 +1,6 @@
 const express = require('express');
 const expressHandlebars = require('express-handlebars');
-const fortuneCookie = require('./lib/fortune');
+const handlers = require('./lib/handlers');
 
 const { engine } = expressHandlebars;
 
@@ -14,24 +14,11 @@ const port = process.env.port || 3000;
 
 app.use(express.static(__dirname + '/public'));
 
-app.get('/', (req, res) => {
-    res.render('home');
-});
+app.get('/', handlers.home);
+app.get('/about', handlers.about);
 
-app.get('/about', (req, res) => {
-    res.render('about', { fortune: fortuneCookie.getFortune() });
-});
-
-app.use((req, res) => {
-    res.status(404);
-    res.render('404');
-});
-
-app.use((err, req, res, next) => {
-    console.error(err.message);
-    res.status(500);
-    res.render('500');
-});
+app.use((req, res) => handlers.notFound);
+app.use((err, req, res, next) => handlers.serverError);
 
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`);
