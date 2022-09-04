@@ -4,6 +4,7 @@
     "description": "",
     "main": "meadowlark.js",
     "scripts": {
+        "start": "node meadowlark.js",
         "test": "jest",
         "lint": "eslint meadowlark.js lib"
     },
