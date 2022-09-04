@@ -1,5 +1,8 @@
 const express = require('express');
 const expressHandlebars = require('express-handlebars');
+const path = require('path');
+const handlers = require('./lib/handlers');
+
 const { engine } = expressHandlebars;
 
 const app = express();
@@ -10,36 +13,22 @@ app.set('view engine', 'handlebars');
 
 const port = process.env.port || 3000;
 
-const fortuneCookies = [
-    'Победи свои страхи, или они победят тебя.',
-    'Рекам нужны истоки.',
-    'Не бойся неведомого.',
-    'Тебя ждет приятный сюрприз.',
-    'Будь проще везде, где только можно.',
-];
+app.use(express.static(path.join(__dirname, 'public')));
 
-app.use(express.static(__dirname + '/public'));
+app.get('/', handlers.home);
+app.get('/about', handlers.about);
 
-app.get('/', (req, res) => {
-    res.render('home');
-});
+/* eslint-disable no-unused-vars */
+app.use((req, res) => handlers.notFound);
+app.use((err, req, res, next) => handlers.serverError);
+/* eslint-enable no-unused-vars */
 
-app.get('/about', (req, res) => {
-    const randomFortune = fortuneCookies[Math.floor(Math.random() * fortuneCookies.length)];
-    res.render('about', { fortune: randomFortune });
-});
-
-app.use((req, res) => {
-    res.status(404);
-    res.render('404');
-});
-
-app.use((err, req, res, next) => {
-    console.error(err.message);
-    res.status(500);
-    res.render('500');
-});
-
-app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`);
-});
+if (require.main === module) {
+    app.listen(port, () => {
+        console.log(
+            `Example app listening on port ${port}; Press Ctrl + C for exit.`,
+        );
+    });
+} else {
+    module.exports = app;
+}
